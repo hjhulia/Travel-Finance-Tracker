@@ -1,0 +1,162 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Travel Finance Tracker</title>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+<div id="telaBoasVindas" class="tela-boas-vindas">
+    <div class="welcome-card">
+        <h1>🌍 Travel Finance Tracker</h1>
+        <p>Controle financeiro para suas viagens internacionais</p>
+        <div class="welcome-form">
+            <input type="text" id="inputNome" placeholder="Digite seu nome" class="input-nome">
+            <button id="btnEntrar" class="btn-entrar">✈️ ENTRAR</button>
+        </div>
+        <div id="usuariosRecentesDiv" class="usuarios-recentes" style="display: none;">
+            <h4>📋 Últimos viajantes:</h4>
+            <div id="listaUsuarios" class="lista-usuarios"></div>
+        </div>
+    </div>
+</div>
+
+<div id="appPrincipal" style="display: none;">
+<header>
+    <div class="header-top">
+        <div class="header-controls">
+            <div id="saudacao" class="saudacao">Olá, Viajante!</div>
+            <button id="btnTema" class="btn-tema">🌙 Dark</button>
+            <button id="btnExportar" class="btn-exportar">📥 Exportar CSV</button>
+            <button id="btnSair" class="btn-sair">🚪 Sair</button>
+        </div>
+    </div>
+    <h1>Travel Finance Tracker</h1>
+    <p>Controle financeiro para viagens internacionais</p>
+</header>
+
+<main>
+    <div id="notificacao-container"></div>
+
+    <section class="dashboard">
+        <div class="card">
+            <h3>💰 Total de Gastos</h3>
+            <p id="totalGastos" class="valor-grande">R$ 0,00</p>
+        </div>
+        <div class="card">
+            <h3>🌍 Moeda Base</h3>
+            <select id="selectMoedaBase" class="input-padrao">
+                <option value="BRL">BRL - Real Brasileiro</option>
+                <option value="USD">USD - Dólar Americano</option>
+                <option value="EUR">EUR - Euro</option>
+                <option value="GBP">GBP - Libra Esterlina</option>
+                <option value="JPY">JPY - Iene Japonês</option>
+                <option value="CNY">CNY - Yuan Chinês</option>
+            </select>
+        </div>
+        <div class="card">
+            <h3>🎯 Orçamento</h3>
+            <div class="grupo-input">
+                <input type="number" id="inputOrcamento" placeholder="Definir orçamento" class="input-padrao">
+                <button id="btnOrcamento" class="btn-secundario">Salvar</button>
+                <button id="btnResetOrcamento" class="btn-reset">🗑️ Reset</button>
+            </div>
+        </div>
+        <div id="blocoSaldo" class="card" style="display: none;">
+            <h3>⚖️ Saldo Restante</h3>
+            <p id="saldoRestante" class="valor-grande">R$ 0,00</p>
+        </div>
+    </section>
+
+    <section class="painel-filtro">
+        <h2>📅 Filtrar por Período</h2>
+        <div class="filtro-container">
+            <div class="filtro-grupo">
+                <label>Data Início</label>
+                <input type="month" id="filtroInicio" class="input-padrao">
+            </div>
+            <div class="filtro-grupo">
+                <label>Data Fim</label>
+                <input type="month" id="filtroFim" class="input-padrao">
+            </div>
+            <button id="btnFiltrar" class="btn-principal">Aplicar</button>
+            <button id="btnLimparFiltro" class="btn-secundario">Limpar</button>
+        </div>
+    </section>
+
+    <div class="graficos-container">
+        <section class="painel-grafico">
+            <h2>📊 Gastos por Mês</h2>
+            <canvas id="graficoGastos"></canvas>
+        </section>
+
+        <section class="painel-grafico">
+            <h2>🥧 Gastos por Categoria</h2>
+            <canvas id="graficoPizza"></canvas>
+        </section>
+    </div>
+
+    <section class="painel-dicas">
+        <h2>🌍 Dicas e Destinos para Você</h2>
+        <div id="container-dicas" class="grade-dicas"></div>
+    </section>
+
+    <section class="painel-moedas">
+        <h2>💱 Câmbio de Referência</h2>
+        <div style="display: flex; justify-content: flex-end; margin-bottom: 1rem;">
+            <button id="btnAtualizarCambio" class="btn-secundario" style="font-size: 0.8rem;">
+                🔄 Atualizar Cotações do Dia
+            </button>
+        </div>
+        <div class="cambio-wrapper">
+            <div id="cambioGrid" class="cambio-grid"></div>
+        </div>
+        <div id="infoMoedaBase" class="info-moeda-base"></div>
+        <div id="infoAtualizacao" class="info-atualizacao" style="display: none;"></div>
+        <small>💡 Ordenado do destino MAIS BARATO para o MAIS CARO (1º = melhor para viajar!)</small>
+    </section>
+
+    <section class="secao-formulario">
+        <h2>➕ Adicionar Gasto</h2>
+        <div class="container-form">
+            <input type="text" id="inputDescricao" placeholder="Descrição" class="input-padrao">
+            <input type="number" id="inputValor" placeholder="Valor" step="0.01" class="input-padrao">
+            <select id="inputCategoria" class="select-categoria input-padrao">
+                <option value="Alimentação">🍔 Alimentação</option>
+                <option value="Hospedagem">🏨 Hospedagem</option>
+                <option value="Transporte">🚗 Transporte</option>
+                <option value="Passeios">🎡 Passeios</option>
+                <option value="Compras">🛍️ Compras</option>
+                <option value="Outros">📌 Outros</option>
+            </select>
+            <select id="inputMoeda" class="input-padrao">
+                <option value="BRL">BRL - Real Brasileiro</option>
+                <option value="USD">USD - Dólar Americano</option>
+                <option value="EUR">EUR - Euro</option>
+                <option value="GBP">GBP - Libra Esterlina</option>
+                <option value="JPY">JPY - Iene Japonês</option>
+                <option value="CNY">CNY - Yuan Chinês</option>
+            </select>
+            <input type="date" id="inputData" class="input-padrao">
+            <button id="btnRegistrar" class="btn-principal">Registrar Gasto</button>
+        </div>
+    </section>
+
+    <section class="secao-lista">
+        <h2>📋 Gastos Registrados</h2>
+        <p id="mensagemVazia" class="mensagem-vazia">Nenhum gasto registrado ainda.</p>
+        <ul id="listaGastos" style="list-style: none;"></ul>
+    </section>
+</main>
+
+<footer>
+    <p>Travel Finance Tracker | Cotações fornecidas por Frankfurter API (Taxa de Mercado - Atualização 1x/dia)</p>
+</footer>
+</div>
+
+<script src="script.js"></script>
+</body>
+</html>
