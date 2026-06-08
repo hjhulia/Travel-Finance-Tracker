@@ -1,4 +1,3 @@
-// CONSTANTES GLOBAIS
 let gastos = [];
 let moedaBase = "BRL";
 let orcamento = null;
@@ -10,7 +9,6 @@ let usuarioAtual = "";
 let ultimaNotificacao = "";
 let ultimaAtualizacao = null;
 
-// Taxas de câmbio padrão (fallback)
 let taxas = {
     BRL: 1, USD: 5.18, EUR: 5.45, GBP: 6.40, JPY: 0.033, CNY: 0.71
 };
@@ -18,7 +16,6 @@ let taxas = {
 const categorias = ["Alimentação", "Hospedagem", "Transporte", "Passeios", "Compras", "Outros"];
 const coresCategorias = ["#F59E0B", "#10B981", "#3B82F6", "#8B5CF6", "#EF4444", "#6B7280"];
 
-// BANDEIRAS COM IMAGENS (funciona em qualquer PC)
 const todasMoedas = {
     USD: { nome: "Dólar Americano", bandeira: "<img src='https://flagcdn.com/us.svg' style='width: 40px; height: 30px; border-radius: 4px;'>" },
     EUR: { nome: "Euro", bandeira: "<img src='https://flagcdn.com/eu.svg' style='width: 40px; height: 30px; border-radius: 4px;'>" },
@@ -28,7 +25,6 @@ const todasMoedas = {
     BRL: { nome: "Real Brasileiro", bandeira: "<img src='https://flagcdn.com/br.svg' style='width: 40px; height: 30px; border-radius: 4px;'>" }
 };
 
-// DICAS
 const todasDicas = [
     "✈️ Viajar na baixa temporada pode economizar até 50% nas passagens!",
     "🏨 Hostels e Airbnb costumam ser mais baratos que hotéis tradicionais.",
@@ -47,7 +43,6 @@ const todasDicas = [
     "🍽️ Almoço em self-service por quilo é mais econômico que à la carte."
 ];
 
-// FUNÇÕES AUXILIARES
 function formatarDataHora(data) {
     return data.toLocaleDateString('pt-BR') + ' às ' + data.toLocaleTimeString('pt-BR');
 }
@@ -66,7 +61,6 @@ function calcularTotal(lista) {
     return lista.reduce((t, g) => t + (g.convertido || 0), 0);
 }
 
-// DICAS SAZONAIS
 function getDicasSazonais() {
     const mes = new Date().getMonth();
     const dicas = {
@@ -86,7 +80,6 @@ function getDicasSazonais() {
     return dicas[mes] || "🌎 Toda época é boa para viajar! Pesquise promoções de passagens.";
 }
 
-// API DE CÂMBIO
 async function atualizarTaxasReais() {
     try {
         const response = await fetch(`https://api.frankfurter.app/latest?from=BRL&to=USD,EUR,GBP,JPY,CNY`);
@@ -118,7 +111,6 @@ async function atualizarTaxasReais() {
     }
 }
 
-// NOTIFICAÇÕES
 function mostrarNotificacao(mensagem, tipo = "alerta-limite") {
     const container = document.getElementById("notificacao-container");
     if (!container) return;
@@ -148,7 +140,6 @@ function verificarLimiteOrcamento() {
     }
 }
 
-// GERENCIAMENTO DE USUÁRIOS
 function getUsuarios() {
     const u = localStorage.getItem("usuarios");
     return u ? JSON.parse(u) : [];
@@ -214,7 +205,6 @@ function salvarDadosUsuario() {
     }));
 }
 
-// GASTOS
 function adicionarGasto(valor, moeda, data, categoria) {
     valor = parseFloat(valor);
     if (isNaN(valor) || valor <= 0) {
@@ -341,7 +331,6 @@ function confirmarExclusao(id) {
     document.getElementById('confirmarNao').onclick = () => modal.remove();
 }
 
-// RESET ORÇAMENTO
 function resetOrcamento() {
     orcamento = null;
     const inputOrcamento = document.getElementById("inputOrcamento");
@@ -351,7 +340,6 @@ function resetOrcamento() {
     mostrarNotificacao("💰 Orçamento resetado com sucesso!", "alerta-proximo");
 }
 
-// FILTROS
 function filtrarGastos() {
     if (!gastos.length) return [];
     if (!filtroInicio && !filtroFim) return gastos;
@@ -364,7 +352,6 @@ function filtrarGastos() {
     });
 }
 
-// GRÁFICOS
 function atualizarGrafico() {
     const canvas = document.getElementById("graficoGastos");
     if (!canvas) return;
@@ -470,7 +457,6 @@ function atualizarGraficoPizza() {
     });
 }
 
-// CÂMBIO
 function atualizarCambio() {
     const container = document.getElementById("cambioGrid");
     const infoBase = document.getElementById("infoMoedaBase");
@@ -527,7 +513,6 @@ function atualizarCambio() {
     }
 }
 
-// GERAR DICAS (sem a dica de câmbio "Euro desvalorizado")
 function gerarDicasDestinos() {
     const container = document.getElementById("container-dicas");
     if (!container) return;
@@ -573,7 +558,6 @@ function gerarDicasDestinos() {
     `;
 }
 
-// EXPORTAÇÃO
 function exportarCSV() {
     let csv = "Descrição,Valor,Moeda,Data,Categoria,Convertido (BRL)\n";
     gastos.forEach(g => {
@@ -589,7 +573,6 @@ function exportarCSV() {
     mostrarNotificacao("📥 Gastos exportados com sucesso!", "alerta-proximo");
 }
 
-// TEMA
 function toggleTema() {
     document.body.classList.toggle("dark");
     const btn = document.getElementById("btnTema");
@@ -605,7 +588,6 @@ function initTema() {
     }
 }
 
-// ANIMAÇÕES
 function mostrarAviao() {
     const div = document.createElement('div');
     div.className = 'animacao-aviao';
@@ -622,7 +604,6 @@ function atualizarSaudacao() {
     if (saudacaoEl) saudacaoEl.textContent = `${periodo}, ${usuarioAtual}! ${emoji} ✈️`;
 }
 
-// INTERFACE PRINCIPAL
 function atualizarInterface() {
     const filtrados = filtrarGastos();
     const total = calcularTotal(filtrados);
@@ -677,7 +658,6 @@ function atualizarInterface() {
     gerarDicasDestinos();
 }
 
-// TELA DE BOAS VINDAS
 function atualizarListaUsuarios() {
     const usuarios = getUsuarios();
     const container = document.getElementById("usuariosRecentesDiv");
@@ -760,7 +740,6 @@ function sairApp() {
     atualizarListaUsuarios();
 }
 
-// EVENTOS
 function initEventos() {
     const btnEntrar = document.getElementById("btnEntrar");
     if (btnEntrar) btnEntrar.onclick = entrarApp;
@@ -857,7 +836,6 @@ function initEventos() {
     }
 }
 
-// INICIALIZAÇÃO
 async function init() {
     initTema();
     initEventos();
