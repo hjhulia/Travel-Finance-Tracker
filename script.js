@@ -215,12 +215,7 @@ function salvarDadosUsuario() {
 }
 
 // GASTOS
-function adicionarGasto(descricao, valor, moeda, data, categoria) {
-    if (!descricao || !descricao.trim()) {
-        alert("Preencha a descrição!");
-        return false;
-    }
-    
+function adicionarGasto(valor, moeda, data, categoria) {
     valor = parseFloat(valor);
     if (isNaN(valor) || valor <= 0) {
         alert("Valor inválido!");
@@ -231,7 +226,7 @@ function adicionarGasto(descricao, valor, moeda, data, categoria) {
     
     gastos.push({
         id: Date.now(),
-        descricao: descricao.trim(),
+        descricao: categoria,
         valor: valor,
         moeda: moeda,
         data: data,
@@ -255,7 +250,6 @@ function editarGasto(id) {
         <div class="modal-edicao-content">
             <h3>✏️ Editar Gasto</h3>
             <div class="container-form">
-                <input type="text" id="editDescricao" placeholder="Descrição" class="input-padrao" value="${gasto.descricao.replace(/"/g, '&quot;')}">
                 <input type="number" id="editValor" placeholder="Valor" step="0.01" class="input-padrao" value="${gasto.valor}">
                 <select id="editCategoria" class="input-padrao">
                     <option value="Alimentação" ${gasto.categoria === 'Alimentação' ? 'selected' : ''}>🍔 Alimentação</option>
@@ -285,25 +279,19 @@ function editarGasto(id) {
     document.body.appendChild(modal);
     
     document.getElementById('confirmarEditar').onclick = () => {
-        const novaDescricao = document.getElementById('editDescricao').value.trim();
         const novoValor = parseFloat(document.getElementById('editValor').value);
         const novaCategoria = document.getElementById('editCategoria').value;
         const novaMoeda = document.getElementById('editMoeda').value;
         const novaData = document.getElementById('editData').value;
-        
-        if (!novaDescricao) {
-            alert("Preencha a descrição!");
-            return;
-        }
         
         if (isNaN(novoValor) || novoValor <= 0) {
             alert("Valor inválido!");
             return;
         }
         
-        gasto.descricao = novaDescricao;
         gasto.valor = novoValor;
         gasto.categoria = novaCategoria;
+        gasto.descricao = novaCategoria;
         gasto.moeda = novaMoeda;
         gasto.data = novaData;
         gasto.convertido = converterParaBase(novoValor, novaMoeda);
@@ -539,7 +527,7 @@ function atualizarCambio() {
     }
 }
 
-// GERAR DICAS
+// GERAR DICAS (sem a dica de câmbio "Euro desvalorizado")
 function gerarDicasDestinos() {
     const container = document.getElementById("container-dicas");
     if (!container) return;
@@ -550,21 +538,6 @@ function gerarDicasDestinos() {
         [dicasAleatorias[i], dicasAleatorias[j]] = [dicasAleatorias[j], dicasAleatorias[i]];
     }
     const dicasSelecionadas = dicasAleatorias.slice(0, 5);
-    
-    const brlParaUSD = taxas.USD;
-    const brlParaEUR = taxas.EUR;
-    const brlParaJPY = taxas.JPY;
-    
-    let dicaCambio = "";
-    if (brlParaUSD < 5.0) {
-        dicaCambio = "🇺🇸 Dólar em queda! Ótimo momento para comprar passagens para os EUA!";
-    } else if (brlParaEUR < 5.5) {
-        dicaCambio = "🇪🇺 Euro desvalorizado! Europa está mais barata que o normal!";
-    } else if (brlParaJPY < 0.033) {
-        dicaCambio = "🇯🇵 Iene muito barato! Japão está com câmbio excelente!";
-    } else {
-        dicaCambio = "🌎 Pesquise destinos com moeda desvalorizada para economizar!";
-    }
     
     const total = calcularTotal(gastos);
     let dicaOrcamento = "";
@@ -591,10 +564,6 @@ function gerarDicasDestinos() {
         <div class="dica-card">
             <div class="dica-titulo">🎯 Seu Orçamento</div>
             <div class="dica-texto">${dicaOrcamento}</div>
-        </div>
-        <div class="dica-card">
-            <div class="dica-titulo">💱 Dica de Câmbio</div>
-            <div class="dica-texto">${dicaCambio}</div>
         </div>
         <div class="dica-card">
             <div class="dica-titulo">📅 Dica Sazonal</div>
@@ -808,14 +777,12 @@ function initEventos() {
     const btnRegistrar = document.getElementById("btnRegistrar");
     if (btnRegistrar) {
         btnRegistrar.onclick = () => {
-            const desc = document.getElementById("inputDescricao").value;
             const valor = document.getElementById("inputValor").value;
             const moeda = document.getElementById("inputMoeda").value;
             const categoria = document.getElementById("inputCategoria").value;
             let data = document.getElementById("inputData").value;
             
-            if (adicionarGasto(desc, valor, moeda, data, categoria)) {
-                document.getElementById("inputDescricao").value = "";
+            if (adicionarGasto(valor, moeda, data, categoria)) {
                 document.getElementById("inputValor").value = "";
                 document.getElementById("inputData").value = "";
             }
